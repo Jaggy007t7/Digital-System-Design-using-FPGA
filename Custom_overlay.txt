@@ -1,0 +1,443 @@
+Creating a Custom Overlay for PYNQ-Z2 Using Vivado and Jupyter Notebook
+Complete Step-by-Step Guide
+
+This guide explains how to:
+
+Create FPGA hardware in Vivado
+Use buttons and LEDs on the PYNQ-Z2 board
+Generate .bit and .hwh files
+Upload overlays without JTAG
+Program FPGA using Jupyter Notebook
+Understand the difference between Bitstream() and Overlay()
+
+Board used:
+
+PYNQ-Z2
+1. Install Required Software
+
+Install:
+
+Vivado Design Suite
+PYNQ Framework Documentation
+
+Flash the PYNQ image onto an SD card and boot the board.
+
+2. Create Vivado Project
+
+Open Vivado:
+
+Create Project
+
+Choose:
+
+RTL Project
+
+When selecting hardware:
+
+Recommended
+
+Select:
+
+Boards → PYNQ-Z2
+
+Vivado automatically selects the correct FPGA.
+
+Manual FPGA Part Selection
+
+If selecting manually:
+
+Setting	Value
+Family	Zynq-7000
+Device	xc7z020
+Package	clg400
+Speed Grade	-1
+
+Final part:
+
+xc7z020clg400-1
+3. Create Half Adder Verilog Module
+
+Create file:
+
+half_adder.v
+
+Code:
+
+module half_adder(
+    input x,
+    input y,
+    output sum,
+    output carry
+);
+
+assign {carry, sum} = x + y;
+
+endmodule
+4. Create Top Module
+
+Create file:
+
+top_half_adder.v
+
+Code:
+
+module top_half_adder(
+    input btn0,
+    input btn1,
+    output led0,
+    output led1
+);
+
+half_adder HA (
+    .x(btn0),
+    .y(btn1),
+    .sum(led0),
+    .carry(led1)
+);
+
+endmodule
+
+This connects:
+
+buttons → half adder inputs
+LEDs → half adder outputs
+5. Create XDC Constraints File
+
+Create:
+
+top_half_adder.xdc
+
+Add:
+
+## Buttons
+set_property PACKAGE_PIN D19 [get_ports btn0]
+set_property IOSTANDARD LVCMOS33 [get_ports btn0]
+
+set_property PACKAGE_PIN D20 [get_ports btn1]
+set_property IOSTANDARD LVCMOS33 [get_ports btn1]
+
+## LEDs
+set_property PACKAGE_PIN R14 [get_ports led0]
+set_property IOSTANDARD LVCMOS33 [get_ports led0]
+
+set_property PACKAGE_PIN P14 [get_ports led1]
+set_property IOSTANDARD LVCMOS33 [get_ports led1]
+6. Add Files to Vivado
+
+Add:
+
+half_adder.v
+top_half_adder.v
+top_half_adder.xdc
+
+Set top module:
+
+top_half_adder
+7. Generate Bitstream
+
+Run:
+
+Synthesis
+Implementation
+Generate Bitstream
+8. Find Generated Files
+.bit File
+
+Located in:
+
+<project>/<project.runs>/impl_1/
+
+Example:
+
+top_half_adder.bit
+.hwh File
+
+Generated only for block designs using AXI/IP Integrator.
+
+Located in:
+
+<project>/<project.gen>/sources_1/bd/design_1/hw_handoff/
+9. Understanding .bit vs .hwh
+File	Purpose
+.bit	Programs FPGA
+.hwh	Hardware metadata for PYNQ
+10. Uploading Bitstream Without JTAG
+
+You do NOT need JTAG.
+
+Workflow:
+
+Vivado → Generate .bit → Upload to PYNQ → Program from Python
+11. Upload Files to PYNQ
+
+Open Jupyter:
+
+http://<board-ip>:9090
+
+Upload:
+
+.bit
+.hwh (if available)
+
+to:
+
+/home/xilinx/jupyter_notebooks/
+12. Programming Pure HDL Design
+
+Your current design is:
+
+pure Verilog
+direct FPGA pins
+no AXI
+no Zynq PS
+
+Therefore use:
+
+from pynq import Bitstream
+
+bs = Bitstream("top_half_adder.bit")
+bs.download()
+
+This programs FPGA successfully.
+
+Buttons and LEDs start working immediately.
+
+13. Why Overlay() Failed
+
+You got:
+
+RuntimeError: Unable to find metadata for bitstream
+
+Reason:
+
+Overlay() expects a .hwh file
+your design does not generate one
+14. Difference Between Bitstream and Overlay
+Method	Needs .hwh	Used For
+Bitstream()	No	Pure HDL FPGA designs
+Overlay()	Yes	AXI/PYNQ overlays
+15. Creating a Proper PYNQ Overlay
+
+To use:
+
+Overlay("design.bit")
+
+you must create:
+
+Zynq Processing System
+AXI interfaces
+block design
+16. Packaging Half Adder as IP
+
+In Vivado:
+
+Tools → Create and Package New IP
+
+Choose:
+
+Package your current project
+
+Name:
+
+half_adder_ip
+
+Repackage IP.
+
+17. Create Block Design
+
+Open:
+
+IP Integrator → Create Block Design
+
+Name:
+
+design_1
+18. Add Zynq Processing System
+
+Add IP:
+
+ZYNQ7 Processing System
+
+Run:
+
+Run Block Automation
+
+Vivado configures:
+
+DDR
+clocks
+resets
+19. Add AXI GPIO
+
+Add:
+
+one AXI GPIO for inputs
+one AXI GPIO for outputs
+Configure Input GPIO
+
+Set:
+
+Width = 2
+All Inputs
+Configure Output GPIO
+
+Set:
+
+Width = 2
+All Outputs
+20. Add Custom Half Adder IP
+
+Add:
+
+half_adder_ip
+21. Run Connection Automation
+
+Click:
+
+Run Connection Automation
+
+Vivado connects:
+
+AXI buses
+clocks
+resets
+22. Connect Signals
+Inputs
+
+Connect:
+
+gpio_io_o[0] → x
+gpio_io_o[1] → y
+Outputs
+
+Connect:
+
+sum → gpio_io_i[0]
+carry → gpio_io_i[1]
+23. Make External Ports
+
+Right-click GPIO ports:
+
+Make External
+
+Rename:
+
+buttons
+leds
+24. Validate and Build
+
+Run:
+
+Validate Design
+
+Then:
+
+Create HDL Wrapper
+Generate Bitstream
+25. Locate Overlay Files
+.bit
+
+Located in:
+
+project.runs/impl_1/
+.hwh
+
+Located in:
+
+project.gen/sources_1/bd/design_1/hw_handoff/
+26. Upload Overlay Files
+
+Upload BOTH:
+
+design_1.bit
+design_1.hwh
+
+to Jupyter notebook folder.
+
+27. Load Overlay in Python
+
+Now this works:
+
+from pynq import Overlay
+
+ol = Overlay("design_1.bit")
+28. Access IP Blocks
+
+List available IPs:
+
+ol.ip_dict
+29. Read Buttons
+buttons = ol.axi_gpio_0
+
+value = buttons.read(0)
+
+print(value)
+30. Control LEDs
+leds = ol.axi_gpio_1
+
+leds.write(0, 3)
+31. Recommended Learning Progression
+Beginner
+Verilog
+LEDs/buttons
+constraints
+bitstream generation
+Intermediate
+Zynq PS
+AXI GPIO
+Overlay()
+Python control
+Advanced
+DMA
+Vitis HLS
+interrupts
+AI accelerators
+video processing
+32. Common Errors
+Error
+Unable to find metadata for bitstream
+
+Cause:
+
+missing .hwh
+
+Fix:
+
+use Bitstream()
+OR create AXI block design
+AXI IP Not Accessible
+
+Cause:
+
+AXI not connected properly
+
+Fix:
+
+run connection automation
+Bitstream Generation Failure
+
+Cause:
+
+missing clock/reset wiring
+
+Fix:
+
+rerun block automation
+Final Notes
+
+Your current pure HDL design is completely valid and useful for learning FPGA fundamentals.
+
+You are learning:
+
+hardware logic
+synthesis
+FPGA pin mapping
+Verilog
+
+Moving to AXI overlays later adds:
+
+Python hardware control
+dynamic overlays
+DMA acceleration
+embedded Linux integration
+advanced FPGA applications
