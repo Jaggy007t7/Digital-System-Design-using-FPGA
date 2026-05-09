@@ -1,4 +1,6 @@
-XDC : Xilinx Design Constraints.
+XDC: Xilinx Design Constraints.
+PMOD: Peripheral Module.
+--> We can use this as normal GPIO pins.
 --> Use master XDC file for Info regarding the pins.
 
 WorkFLow:-
@@ -6,5 +8,12 @@ WorkFLow:-
 2. Perform synthesis of it.
 3. Write Constraint file.
 4. Perform Implementation and at the end genrate bitstream.
+
+--> Note: Vivado optimizes the hardware by itself.
+
+Project:-
+1. blinking Led using button.
+2. All type of gates on FPGA.
+
 
 
