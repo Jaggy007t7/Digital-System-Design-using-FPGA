@@ -1,2 +1,10 @@
 XDC : Xilinx Design Constraints.
 --> Use master XDC file for Info regarding the pins.
+
+WorkFLow:-
+1. Write code for design.
+2. Perform synthesis of it.
+3. Write Constraint file.
+4. Perform Implementation and at the end genrate bitstream.
+
+
