@@ -1,5 +1,7 @@
 XDC: Xilinx Design Constraints.
 PMOD: Peripheral Module.
+UDPs: User Defined Primitives.
+
 --> We can use this as normal GPIO pins.
 --> Use master XDC file for Info regarding the pins.
 
