@@ -16,6 +16,8 @@ WorkFLow:-
 Project:-
 1. blinking Led using button.
 2. All type of gates on FPGA.
+3. Mux and Demux implementation.
+4. Communication between two boards using Mux and demux.
 
 --> How we can use different FPGA board in same project.
 --> 
