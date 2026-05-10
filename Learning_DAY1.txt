@@ -15,5 +15,8 @@ Project:-
 1. blinking Led using button.
 2. All type of gates on FPGA.
 
+--> How we can use different FPGA board in same project.
+--> 
+
 
 
