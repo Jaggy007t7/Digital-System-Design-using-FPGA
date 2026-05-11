@@ -1,0 +1,10 @@
+To generate a lower-frequency clock signal, an n-bit counter can be used. The Most Significant Bit (MSB) of the counter toggles at a reduced frequency and can be used as the clock input for the design.
+The output frequency is given by:
+(( f_out = f_clk / (2^n) ))
+
+Where:
+f_out → Output clock frequency
+f_clk → Original input clock frequency
+n → Number of counter bits
+
+The MSB divides the original clock frequency by 2^n, effectively creating a slower clock signal suitable for timing control and FPGA designs.
