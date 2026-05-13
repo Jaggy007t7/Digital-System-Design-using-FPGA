@@ -1,26 +1,80 @@
-XDC: Xilinx Design Constraints.
-PMOD: Peripheral Module.
-UDPs: User Defined Primitives.
+=== PYNQ-Z2 Board Specifications ===
 
---> We can use this as normal GPIO pins.
---> Use master XDC file for Info regarding the pins.
+Processor:
+- Zynq XC7Z020-1CLG400C SoC
+- Dual ARM Cortex-A9 MPCore with CoreSight
+- 650MHz dual-core processor
+- 32 KB Instruction, 32 KB Data per processor L1 Cache
+- 512 KB unified L2 Cache
+- 256 KB On-Chip Memory
 
-WorkFLow:-
-1. Write code for design.
-2. Perform synthesis of it.
-3. Write Constraint file.
-4. Perform Implementation and at the end genrate bitstream.
+Memory:
+- 512 Mbyte DDR3 with 16-bit bus @ 1050 Mbps
+- 128 Mbit Quad-SPI Flash
+- Micro SD card connector
 
---> Note: Vivado optimizes the hardware by itself.
+I/O Interfaces:
+- USB-JTAG Programming circuitry
+- USB OTG 2.0
+- USB-UART bridge
+- One 10/100/1G Ethernet
+- HDMI Input and Output
+- I2S interface with 24bit DAC with 3.5mm TRRS jack
+- Line-in with 3.5mm jack
+- 2x UART, 2x CAN 2.0B, 2x I2C, 2x SPI, 4x 32b GPIO
+- 2x USB 2.0 (OTG), 2x Tri-mode Gigabit Ethernet, 2x SD/SDIO
 
-Project:-
-1. blinking Led using button.
-2. All type of gates on FPGA.
-3. Mux and Demux implementation.
-4. Communication between two boards using Mux and demux.
+Switches and LEDs:
+- 2 Slide switches
+- 2 RGB LEDs
+- 4 LEDs
+- 4 Push-buttons
 
---> How we can use different FPGA board in same project.
---> 
+Clocks:
+- One 125 MHz for Programmable Logic (PL)
+- One 50 MHz for Processing System (PS)
 
+Expansion Ports:
+- 2 Pmod ports (16 Total FPGA I/O, with 8 shared pins with Raspberry Pi connector)
+- 1 Arduino Shield connector (24 Total FPGA I/O)
+- Raspberry Pi connector (28 Total FPGA I/O, with 8 shared pins with Pmod A port)
+- 6 Single-ended 0-3.3V Analog inputs to XADC
 
+FPGA Resources (XC7Z020):
+- 85K logic cells
+- 13300 logic slices (each with four 6-input LUTs and 8 flip-flops)
+- 630 KB of fast block RAM
+- 220 DSP slices
+- Four clock management tiles, each with phase-locked loop (PLL)
+- Internal clock speeds exceeding 450MHz
+- 2x 12 bit, 1 MSPS On-chip analog-to-digital converter (XADC)
 
+Power Monitoring:
+- Active monitoring of power supply currents and voltages
+
+=== PYNQ Framework ===
+
+- Open-source project from AMD
+- Python-based Jupyter framework
+- Python APIs for Xilinx Adaptive Computing platforms
+- Web-based architecture served from embedded processors
+- Allows software engineers to work at higher levels of abstraction
+- Default overlays: base overlay, logictools overlay
+
+=== Development Tools ===
+
+- Vivado ML software suite
+- Includes: HDL simulator, IP Integrator, synthesis, implementation, bitstream generation
+- Vivado Standard edition (free, device-limited)
+- Vitis design software
+
+=== Board Pricing and Availability ===
+
+- Price: $129.00
+- Sold by TUL
+
+=== Required Items for Setup ===
+
+- PYNQ image and 8 GB SD Card
+- Micro-USB cable
+- Ethernet cable
