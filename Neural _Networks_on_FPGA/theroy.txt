@@ -1,0 +1,11 @@
+Machine Learning :-
+Performing tasks without being programmed.
+
+         -> Reinforcement Learning. --> Applied when we have result of decision. 
+        |
+Types -- -> Supervised Learning.  --> With data and labels.
+        |
+         -> Unsupervised learning. --> Only have data and no labels. ML need to find the relation, pattern to indentify.
+
+Other Methods for ML are:
+1. Neural Networks.
