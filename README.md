@@ -1,2 +1,4 @@
 # Digital-System-Design-using-FPGA
 This repository tracks my learning progress for the course Digital Design using FPGA and contains all the code and practice exercises I complete along the way.
+# Learn about VITIS from this site:-
+https://xilinx.github.io/Vitis-Tutorials/2022-1/build/html/docs/Getting_Started/Vitis/Part1.html
