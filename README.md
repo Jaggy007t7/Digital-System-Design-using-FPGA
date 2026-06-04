@@ -5,3 +5,4 @@ https://xilinx.github.io/Vitis-Tutorials/2022-1/build/html/docs/Getting_Started/
 
 # For using HDMI on FPGA:- 
 https://www.hackster.io/s91143621027/pynq-z2-hdmi-usage-2-hdmi-passthrough-227599
+### --> This site contains most of the explaination of HDMI use of pynq z2 and other boards.
