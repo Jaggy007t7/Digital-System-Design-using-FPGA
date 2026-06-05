@@ -9,3 +9,4 @@ https://www.hackster.io/s91143621027/pynq-z2-hdmi-usage-2-hdmi-passthrough-22759
 
 # FOr using HDMI out:-
 https://adaptivesupport.amd.com/s/article/932553?language=en_US
+https://www.hackster.io/s91143621027/pynq-z2-hdmi-usage-1-tpg-output-95cbb6
