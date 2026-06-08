@@ -11,3 +11,15 @@ https://www.hackster.io/s91143621027/pynq-z2-hdmi-usage-2-hdmi-passthrough-22759
 https://adaptivesupport.amd.com/s/article/932553?language=en_US
 # Link 2:-
 https://www.hackster.io/s91143621027/pynq-z2-hdmi-usage-1-tpg-output-95cbb6
+
+
+# Courses for Digital VLSI :-
+### Digital VLSI Design FLOW:-
+https://youtu.be/9QgdNsl9qwk?si=Dz_3fHV17EeN-UET
+
+### CMOS VLSI Design:-
+https://youtu.be/oL8SKNxEaHs?si=yuj944yc1B5sJT_I
+
+### System Verilog:-
+### UVM:-
+### RISC-V architecture.
