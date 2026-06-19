@@ -1,0 +1,679 @@
+This is one of the most important topics in FPGA design. I'll explain it the way timing analysis is taught in FPGA design and VLSI courses, using your **148.5 MHz RLE design** as the example.
+
+---
+
+# 1. What is Static Timing Analysis (STA)?
+
+Every register in an FPGA captures data on the clock edge.
+
+For correct operation, the data launched from one register must reach the next register **before the next clock edge**.
+
+For example:
+
+```text
+           Clock
+             │
+             ▼
+      ┌────────────┐
+      │ Register A │
+      └────────────┘
+             │
+             ▼
+      Combinational Logic
+      (LUTs / DSP / BRAM)
+             │
+             ▼
+      ┌────────────┐
+      │ Register B │
+      └────────────┘
+```
+
+The timing analyzer checks **every such path** in your design.
+
+---
+
+# 2. Clock Period
+
+This is the time available for one computation.
+
+You specified
+
+```tcl
+create_clock -period 6.734 [get_ports clk]
+```
+
+Therefore
+
+Clock frequency
+
+[
+f=\frac1T
+]
+
+[
+=\frac1{6.734ns}
+=148.5MHz
+]
+
+Meaning
+
+Your circuit has only **6.734 ns** to finish every computation.
+
+---
+
+# 3. Setup Timing
+
+The setup requirement says:
+
+> Data must arrive **before** the next clock edge.
+
+Example
+
+```text
+Clock
+
+|---------6.734 ns----------|
+
+Register A             Register B
+
+Launch ---------------> Capture
+```
+
+Suppose
+
+Clock period
+
+```
+6.734 ns
+```
+
+Data path delay
+
+```
+5.2 ns
+```
+
+Then
+
+```
+Slack
+
+=6.734−5.2
+
+=1.534 ns
+```
+
+Positive.
+
+Everything works.
+
+---
+
+Suppose
+
+```
+Delay
+
+7.2 ns
+```
+
+Then
+
+```
+Slack
+
+=6.734−7.2
+
+=-0.466 ns
+```
+
+Negative.
+
+Register B samples incorrect data.
+
+The FPGA will fail at 148.5 MHz.
+
+---
+
+# 4. What is Slack?
+
+Slack is simply
+
+[
+\boxed{\text{Slack}=\text{Required Time}-\text{Arrival Time}}
+]
+
+Positive slack
+
+```
+PASS
+```
+
+Negative slack
+
+```
+FAIL
+```
+
+Your report
+
+```
+Slack = +1.064 ns
+```
+
+means
+
+Your slowest path still finishes **1.064 ns before the deadline**. 
+
+---
+
+# 5. WNS (Worst Negative Slack)
+
+Vivado analyzes **every path**.
+
+Suppose
+
+| Path | Slack   |
+| ---- | ------- |
+| A    | 3 ns    |
+| B    | 2 ns    |
+| C    | 1.4 ns  |
+| D    | 1.06 ns |
+| E    | 2.8 ns  |
+
+The smallest slack is
+
+```
+1.06 ns
+```
+
+This is
+
+```
+Worst Slack
+```
+
+Since it is positive
+
+```
+WNS
+
+=+1.064 ns
+```
+
+Your design passes.
+
+---
+
+Suppose
+
+| Path | Slack |
+| ---- | ----- |
+| A    | 1.5   |
+| B    | 0.7   |
+| C    | -0.3  |
+| D    | -0.9  |
+
+Then
+
+```
+WNS
+
+=-0.9 ns
+```
+
+This is the worst violation.
+
+---
+
+# 6. TNS (Total Negative Slack)
+
+Suppose
+
+Four paths fail
+
+```
+-0.2
+
+-0.4
+
+-0.5
+
+-0.8
+```
+
+Vivado adds them
+
+```
+TNS
+
+=-1.9 ns
+```
+
+Your report
+
+```
+TNS
+
+0
+```
+
+means
+
+No path failed.
+
+Excellent.
+
+---
+
+# 7. Hold Timing
+
+Setup checks
+
+```
+Too Slow
+```
+
+Hold checks
+
+```
+Too Fast
+```
+
+Register B must **not** receive new data immediately after the clock edge.
+
+Example
+
+```text
+Clock Edge
+
+↓
+
+Register A launches
+
+↓
+
+Register B should continue holding
+old data for a short time
+```
+
+If the signal reaches too early
+
+Register B captures the wrong value.
+
+---
+
+Your report
+
+```
+WHS
+
+0.245 ns
+```
+
+means
+
+Every path satisfies the hold requirement with at least **0.245 ns** of margin. 
+
+---
+
+# 8. THS
+
+Exactly like TNS
+
+except for hold.
+
+If several hold violations occur
+
+```
+-0.1
+
+-0.3
+
+-0.5
+```
+
+then
+
+```
+THS
+
+=-0.9
+```
+
+Your report
+
+```
+THS
+
+0
+```
+
+No hold violations.
+
+---
+
+# 9. Data Path Delay
+
+Your report shows
+
+```
+Data Path Delay
+
+4.208 ns
+```
+
+This is the actual time taken by
+
+```
+Register
+
+↓
+
+DSP
+
+↓
+
+Register
+```
+
+This is the slowest path.
+
+---
+
+# 10. Logic Delay
+
+Report
+
+```
+Logic Delay
+
+4.206 ns
+```
+
+Logic delay comes from
+
+```
+LUTs
+
+DSPs
+
+BRAMs
+
+Carry Chains
+
+MUXes
+```
+
+In your design
+
+```
+4.206 ns
+```
+
+Almost the entire delay is inside the DSP block. 
+
+---
+
+# 11. Routing Delay
+
+Report
+
+```
+Routing
+
+0.002 ns
+```
+
+Routing delay is caused by FPGA wires.
+
+Example
+
+```
+Register
+
+↓
+
+Long Wire
+
+↓
+
+LUT
+```
+
+Long wires increase delay.
+
+Your routing delay is essentially negligible, indicating that Vivado placed the communicating DSP blocks very close together.
+
+---
+
+# 12. Logic Levels
+
+Report
+
+```
+Logic Levels
+
+0
+```
+
+Meaning
+
+```
+DSP
+
+↓
+
+DSP
+```
+
+No LUT between them.
+
+If it were
+
+```
+Register
+
+↓
+
+LUT
+
+↓
+
+LUT
+
+↓
+
+MUX
+
+↓
+
+Register
+```
+
+then
+
+```
+Logic Levels
+
+3
+```
+
+More logic levels usually increase delay.
+
+---
+
+# 13. Critical Path
+
+The critical path is
+
+**the slowest path in the entire design.**
+
+Your report
+
+```
+DSP48
+
+↓
+
+DSP48
+```
+
+Specifically
+
+```
+x1_mul
+
+↓
+
+PCOUT
+
+↓
+
+PCIN
+
+↓
+
+x1_s4_reg
+```
+
+This is why the WNS is determined by the DSP-to-DSP connection. 
+
+---
+
+# 14. Clock Uncertainty
+
+Report
+
+```
+Clock Uncertainty
+
+0.035 ns
+```
+
+Real clocks are not perfect.
+
+They have
+
+* Jitter
+* Noise
+* PLL variation
+
+Vivado reserves a small amount of timing margin to account for these effects, slightly reducing the available time for data paths.
+
+---
+
+# 15. Clock Skew
+
+Clock does not reach every register simultaneously.
+
+Example
+
+```
+Register A
+
+Clock arrives
+
+0 ns
+```
+
+Register B
+
+```
+Clock arrives
+
+0.20 ns later
+```
+
+This difference is called
+
+```
+Clock Skew
+```
+
+Vivado includes it in the timing calculation.
+
+---
+
+# 16. Required Time
+
+Your report
+
+```
+Required Time
+
+6.734 ns
+```
+
+This comes directly from your XDC constraint:
+
+```tcl
+create_clock -period 6.734 [get_ports clk]
+```
+
+---
+
+# 17. Arrival Time
+
+Arrival time is when the data actually reaches the destination register.
+
+For your critical path:
+
+```
+Launch Register
+
+↓
+
+DSP
+
+↓
+
+Destination Register
+
+↓
+
+Arrival Time
+```
+
+The timing analyzer computes this automatically based on logic and routing delays.
+
+---
+
+# 18. Maximum Frequency (Fmax)
+
+Since the critical data path delay is about
+
+```
+4.208 ns
+```
+
+The approximate maximum operating frequency is
+
+[
+F_{max}\approx\frac{1}{4.208\text{ ns}}
+\approx237.6\text{ MHz}
+]
+
+Since your target is **148.5 MHz**, your design has a comfortable timing margin.
+
+---
+
+# Summary of Your Timing Report
+
+| Parameter         | Meaning                               | Your Value    | Interpretation                    |
+| ----------------- | ------------------------------------- | ------------- | --------------------------------- |
+| Clock Period      | Time available per cycle              | **6.734 ns**  | Target for each clock cycle       |
+| Clock Frequency   | Operating frequency                   | **148.5 MHz** | Design target                     |
+| WNS               | Worst setup slack                     | **+1.064 ns** | ✅ All setup paths meet timing     |
+| TNS               | Sum of setup violations               | **0 ns**      | ✅ No setup violations             |
+| WHS               | Worst hold slack                      | **+0.245 ns** | ✅ All hold paths meet timing      |
+| THS               | Sum of hold violations                | **0 ns**      | ✅ No hold violations              |
+| Data Path Delay   | Slowest logic path delay              | **4.208 ns**  | Critical path delay               |
+| Logic Delay       | Delay through logic resources         | **4.206 ns**  | Mostly DSP delay                  |
+| Routing Delay     | Delay through FPGA interconnect       | **0.002 ns**  | Excellent placement               |
+| Logic Levels      | Number of LUT levels on critical path | **0**         | DSP-to-DSP path                   |
+| Critical Path     | Slowest path                          | DSP48 → DSP48 | Determines maximum speed          |
+| Clock Uncertainty | Margin for clock imperfections        | **0.035 ns**  | Included in timing calculations   |
+| Estimated Fmax    | Approximate maximum frequency         | **≈ 238 MHz** | Well above the required 148.5 MHz |
+
+This report indicates that your design is not only **functionally capable of running at 148.5 MHz**, but also has **more than 1 ns of setup margin** and **positive hold margin**, making it a robust FPGA implementation.
