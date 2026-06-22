@@ -23,3 +23,5 @@ https://youtu.be/oL8SKNxEaHs?si=yuj944yc1B5sJT_I
 ### System Verilog:-
 ### UVM:-
 ### RISC-V architecture.
+
+https://chat.deepseek.com/a/chat/s/a5e4a47a-db93-4a7d-89bd-52b7d5a6bdb6
