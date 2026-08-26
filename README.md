@@ -29,3 +29,9 @@ https://savobajic.ca/projects/academic/video/
 
 https://chat.deepseek.com/a/chat/s/a5e4a47a-db93-4a7d-89bd-52b7d5a6bdb6
 
+# Important Protocols:- 
+### AMBA (APB)
+https://www.youtube.com/watch?v=uwY7o9e23r4&list=PLqPfWwayuBvMmlmgMMBez3_EYLcd72L1u
+
+### AMBA (AHB)
+https://www.youtube.com/watch?v=dxKE1wHvHCg&list=PLqPfWwayuBvNX_IQPBHGJn8YFkvI86lr9
