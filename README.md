@@ -35,3 +35,6 @@ https://www.youtube.com/watch?v=uwY7o9e23r4&list=PLqPfWwayuBvMmlmgMMBez3_EYLcd72
 
 ### AMBA (AHB)
 https://www.youtube.com/watch?v=dxKE1wHvHCg&list=PLqPfWwayuBvNX_IQPBHGJn8YFkvI86lr9
+
+# Guide For PYNQ Z2 Board:-
+https://pynq.readthedocs.io/en/v2.5.1/pynq_libraries.html
